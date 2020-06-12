@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>my profilo</title>
+</head>
+
+<style type="text/css" >
+
+  	.main{
+  		text-align: center;
+  		border: 2px solid black;
+		padding: 25px;
+		background: url(github.png);
+		background-repeat: no-repeat;
+		background-size: 300px 100px;
+}
+  	.loader {
+		border: 16px solid #f3f3f3; /* Light grey */
+		border-top: 16px solid #3498db; /* Blue */
+		border-radius: 50%;
+		width: 50px;
+		height: 50px;
+		animation: spin 2s linear infinite;
+}
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+
+
+</style>
+
+<body>
+	<div class="loader" id="loading"></div>
+
+	<div class="main" id="mainContainer" hidden>
+		<br />
+		<img 
+			
+			height="100"
+			width="100"
+			id="profileImage"
+		>
+		<h2 id="fullName"></h2>
+		<p id="bio"></p>
+		<h5 id="followersInformation"></h5>
+		<p>
+			check me on <a id="githubLink" target="_blank">GitHub</a>
+		</p>
+		
+		<button onclick="getRepos()">to see repos click me</button> 
+		
+		<div id="divResult"></div>
+		
+		
+	</div>
+<script type="text/javascript">
+
+	fetch('https://api.github.com/users/dipusah')
+	.then(response => response.json())
+	.then((value) => {
+	console.log(value)// expected output: "Success!
+	document.getElementById('profileImage').src=value["avatar_url"]
+	document.getElementById('fullName').textContent=value["name"]
+	document.getElementById('bio').textContent=value["bio"]
+	
+
+	document.getElementById('followersInformation').textContent="I have been followed by "+ value["followers"] + ' people on Github'
+	document.getElementById('githubLink').href=value["html_url"]
+	document.getElementById('mainContainer').hidden=false
+	document.getElementById('loading').hidden=true
+
+});
+
+
+</script>
+<script type="text/javascript">
+	const divResult = document.getElementById("divResult")
+	async function getRepos(){
+		clear();
+		const url = "https://api.github.com/users/dipusah/repos?page=1&per_page=100"
+		const response = await fetch(url)
+		const result = await response.json()
+		console.log(result)
+		result.forEach(i=>{
+			const anchor=document.createElement("a")
+			anchor.href=i.html_url
+			anchor.textContent=i.full_name;
+			divResult.appendChild(anchor)
+
+			divResult.appendChild(document.createElement("br"))    
+		})
+
+
+
+	}
+	function clear(){
+		while(divResult.firstChild) 
+			divResult.removeChild(divResult.firstChild)
+	}
+
+</script>
+
+</body>
+</html>
